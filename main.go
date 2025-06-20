@@ -598,8 +598,10 @@ func (c *controller) sync(ctx context.Context) {
 
 		time.Sleep(c.options.scaleTimeout) // Give some time for all replicas before they receive hundreds req/s
 	}
-
+	level.Info(c.logger).Log("msg", "-------------")
 	c.populate(ctx, hashrings, statefulsets)
+	level.Info(c.logger).Log("msg", "hashrings", fmt.Sprintf("%+v", hashrings))
+	level.Info(c.logger).Log("msg", "-------------")
 	level.Info(c.logger).Log("msg", "hashring populated", "hashring", fmt.Sprintf("%+v", hashrings))
 
 	err = c.saveHashring(ctx, hashrings, cm)
