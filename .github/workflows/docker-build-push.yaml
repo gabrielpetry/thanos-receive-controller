@@ -36,7 +36,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: gabrielpetryzl/test/thanos-receive-controller
+        images: gabrielpetryzl/test
         tags: |
           type=ref,event=branch
           type=ref,event=pr
