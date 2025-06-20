@@ -4,9 +4,9 @@ WORKDIR /workspace
 
 COPY . .
 
-RUN apk update && apk upgrade && apk add --no-cache alpine-sdk
+RUN apk add alpine-sdk
 
-RUN  make thanos-receive-controller
+RUN make thanos-receive-controller
 
 FROM scratch
 
