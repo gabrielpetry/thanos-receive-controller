@@ -36,13 +36,13 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: gabrielpetryzl/test
+        images: gabrielpetryzl/public
         tags: |
           type=ref,event=branch
           type=ref,event=pr
           type=semver,pattern={{version}}
           type=semver,pattern={{major}}.{{minor}}
-          type=sha,prefix={{branch}}-
+          type=sha,prefix=thanos-receive-controller-{{branch}}-
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v5

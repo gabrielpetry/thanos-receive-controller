@@ -536,6 +536,10 @@ func (c *controller) worker(ctx context.Context) {
 func (c *controller) sync(ctx context.Context) {
 	c.reconcileAttempts.Inc()
 	configMap, ok, err := c.cmapInf.GetStore().GetByKey(fmt.Sprintf("%s/%s", c.options.namespace, c.options.configMapName))
+	fmt.Println("----------------" )
+	fmt.Println("namespace", fmt.Sprintf("%s/%s", c.options.namespace, c.options.configMapName))
+	fmt.Println("configMap", configMap)
+	fmt.Println("----------------" )
 
 	if !ok || err != nil {
 		c.reconcileErrors.WithLabelValues(fetch).Inc()
@@ -550,12 +554,18 @@ func (c *controller) sync(ctx context.Context) {
 	}
 
 	var hashrings []receive.HashringConfig
+	fmt.Println("----------------" )
+	fmt.Println("cm.Data[c.options.fileName]", cm.Data[c.options.fileName])
 	if err := json.Unmarshal([]byte(cm.Data[c.options.fileName]), &hashrings); err != nil {
 		c.reconcileErrors.WithLabelValues(decode).Inc()
 		level.Warn(c.logger).Log("msg", "failed to decode configuration", "err", err)
-
 		return
 	}
+	fmt.Println("err", err)
+	fmt.Println("----------------" )
+	fmt.Println("=======================" )
+	fmt.Println("hashrings", hashrings)
+	fmt.Println("=======================" )
 
 	statefulsets := make(map[string][]*appsv1.StatefulSet)
 
@@ -598,10 +608,8 @@ func (c *controller) sync(ctx context.Context) {
 
 		time.Sleep(c.options.scaleTimeout) // Give some time for all replicas before they receive hundreds req/s
 	}
-	level.Info(c.logger).Log("msg", "-------------")
+
 	c.populate(ctx, hashrings, statefulsets)
-	level.Info(c.logger).Log("msg", "hashrings", fmt.Sprintf("%+v", hashrings))
-	level.Info(c.logger).Log("msg", "-------------")
 	level.Info(c.logger).Log("msg", "hashring populated", "hashring", fmt.Sprintf("%+v", hashrings))
 
 	err = c.saveHashring(ctx, hashrings, cm)
@@ -727,6 +735,9 @@ func (c *controller) populateEndpoint(sts *appsv1.StatefulSet, podIndex int, err
 }
 
 func (c *controller) saveHashring(ctx context.Context, hashring []receive.HashringConfig, orgCM *corev1.ConfigMap) error {
+	fmt.Println("----------------" )
+	fmt.Println("hashring", hashring)
+	fmt.Println("----------------" )
 	buf, err := json.Marshal(hashring)
 	if err != nil {
 		return err
